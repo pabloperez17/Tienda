@@ -67,10 +67,36 @@
         } else {
             $patron1 = "/^[0-9]{1,99999.99}$/";
             if(!preg_match($patron1, $temp_precio)) {
-                $err_precio = "El precio debe tener entre 1 y 99999.99 caracteres y contener solamente números";
+                $err_precio = "El precio debe tener entre 1 y 99999.99 y debe contener solamente números";
             } else {
                 $precio = $temp_precio;
                 echo $precio;
+            }
+        }
+
+        #   Validación de descripcion
+        if (strlen($temp_descripcion) == 0) {
+            $err_descripcion = "Campo obligatorio";
+        } else {
+            $patron2 = "/^[a-zA-Z0-9]{1,255}$/";
+            if(!preg_match($patron2, $temp_descripcion)) {
+                $err_descripcion = "La descripción debe tener entre 1 y 255 caracteres y contener solamente letras o números";
+            } else {
+                $descripcion = $temp_descripcion;
+                echo $descripcion;
+            }
+        }
+
+        #   Validación de cantidad
+        if (strlen($temp_cantidad) == 0) {
+            $err_cantidad = "Campo obligatorio";
+        } else {
+            $patron3 = "/^[0-9]{1,99999.99}$/";
+            if(!preg_match($patron3, $temp_cantidad)) {
+                $err_cantidad = "La cantidad debe tener entre 1 y 99999.99 y debe contener solamente números";
+            } else {
+                $cantidad = $temp_cantidad;
+                echo $cantidad;
             }
         }
     }
