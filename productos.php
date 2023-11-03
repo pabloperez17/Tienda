@@ -20,7 +20,7 @@
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Precio: </label>
-                    <input class="form-control" type="number" name="Precio">
+                    <input class="form-control" type="number" name="precio">
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Descripción: </label>
@@ -53,7 +53,7 @@
             $err_nombreProducto = "Campo obligatorio";
         } else {
             $patron = "/^[a-zA-Z0-9]{1,40}$/";
-            if(!preg_match($patron, $temp_nombreProducto)) {
+            if (!preg_match($patron, $temp_nombreProducto)) {
                 $err_nombreProducto = "El nombre debe tener entre 1 y 40 caracteres y contener solamente letras o números";
             } else {
                 $nombreProducto = $temp_nombreProducto;
@@ -66,7 +66,7 @@
             $err_precio = "Campo obligatorio";
         } else {
             $patron1 = "/^[0-9]{1,99999.99}$/";
-            if(!preg_match($patron1, $temp_precio)) {
+            if (!preg_match($patron1, $temp_precio)) {
                 $err_precio = "El precio debe tener entre 1 y 99999.99 y debe contener solamente números";
             } else {
                 $precio = $temp_precio;
@@ -79,7 +79,7 @@
             $err_descripcion = "Campo obligatorio";
         } else {
             $patron2 = "/^[a-zA-Z0-9]{1,255}$/";
-            if(!preg_match($patron2, $temp_descripcion)) {
+            if (!preg_match($patron2, $temp_descripcion)) {
                 $err_descripcion = "La descripción debe tener entre 1 y 255 caracteres y contener solamente letras o números";
             } else {
                 $descripcion = $temp_descripcion;
@@ -92,7 +92,7 @@
             $err_cantidad = "Campo obligatorio";
         } else {
             $patron3 = "/^[0-9]{1,99999.99}$/";
-            if(!preg_match($patron3, $temp_cantidad)) {
+            if (!preg_match($patron3, $temp_cantidad)) {
                 $err_cantidad = "La cantidad debe tener entre 1 y 99999.99 y debe contener solamente números";
             } else {
                 $cantidad = $temp_cantidad;
