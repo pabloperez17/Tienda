@@ -20,7 +20,9 @@
 
         if ($resultado->num_rows == 0) {
     ?>
-        <div class "alert alert-danger" role="alert">EL USUARIO NO EXISTE</div>
+        <div class "alert alert-danger" role="alert">
+            EL USUARIO NO EXISTE
+        </div>
     <?php
         } else {
             while ($fila = $resultado->fetch_assoc()) {

@@ -10,30 +10,7 @@
 </head>
 
 <body>
-    <div class="container">
-        <h1>Insertar producto</h1>
-        <div>
-            <form action="" method="post">
-                <div class="mb-3">
-                    <label class="form-label">Nombre producto: </label>
-                    <input class="form-control" type="text" name="nombreProducto">
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Precio: </label>
-                    <input class="form-control" type="number" name="precio">
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Descripción: </label>
-                    <input class="form-control" type="text" name="descripcion">
-                </div>
-                <div class="mb-3">
-                    <label class="form-label">Cantidad: </label>
-                    <input class="form-control" type="int" name="cantidad">
-                </div>
-                <button class="btn btn-primary" type="submit">Enviar</button>
-            </form>
-        </div>
-    </div>
+
     <?php
     function depurar($entrada)
     {
@@ -101,6 +78,34 @@
         }
     }
     ?>
+    <div class="container">
+        <h1>Insertar producto</h1>
+        <div>
+            <form action="" method="post">
+                <div class="mb-3">
+                    <label class="form-label">Nombre producto: </label>
+                    <input class="form-control" type="text" name="nombreProducto">
+                    <?php if (isset ($err_nombreProducto)) echo '<label class=text-danger>'.$err_nombreProducto. '</label>' ?>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Precio: </label>
+                    <input class="form-control" type="number" name="precio">
+                    <?php if (isset ($err_precio)) echo '<label class=text-danger>'.$err_precio. '</label>' ?>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Descripción: </label>
+                    <input class="form-control" type="text" name="descripcion">
+                    <?php if (isset ($err_descripcion)) echo '<label class=text-danger>'.$err_descripcion. '</label>' ?>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Cantidad: </label>
+                    <input class="form-control" type="int" name="cantidad">
+                    <?php if (isset ($err_cantidad)) echo '<label class=text-danger>'.$err_cantidad. '</label>' ?>
+                </div>
+                <button class="btn btn-primary" type="submit">Enviar</button>
+            </form>
+        </div>
+    </div>
 </body>
 
 </html>
