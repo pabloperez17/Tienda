@@ -51,7 +51,7 @@
             </div>
             <div class="mb-3">
                 <label class="form-label">Contraseña: </label>
-                <input class="form-control" type="text" name="contrasena">
+                <input class="form-control" type="password" name="contrasena">
             </div>
             <input class="btn btn-primary" type="submit" value="Iniciar sesión">
         </form>
