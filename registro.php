@@ -90,9 +90,12 @@
     </div>
     <?php
          if(isset($usuario) && isset($contrasena_cifrada) && isset($fecha_nacimiento)) {
-            $sql = "INSERT INTO usuarios VALUES ('$usuario', '$contrasena_cifrada', '$fecha_nacimiento')";
+            $sql = "INSERT INTO usuarios (usuario, contrasena, fechaNacimiento) VALUES ('$usuario', '$contrasena_cifrada', '$fecha_nacimiento')";
+            $sql2 = "INSERT INTO cestas (usuario, precioTotal) VALUES ('$usuario', '0')";
    
             $conexion->query($sql);
+            $conexion->query($sql2);
+
             echo "<div class='alert alert-success' role='alert'>";
             echo  $usuario . " registrado correctamente</centre>";
             echo "</div>";

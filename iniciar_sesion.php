@@ -27,6 +27,7 @@
         } else {
             while ($fila = $resultado->fetch_assoc()) {
                 $contrasena_cifrada = $fila["contrasena"];
+                $rol = $fila["rol"];
             }
 
             $acceso_valido = password_verify($contrasena, $contrasena_cifrada);
@@ -35,6 +36,7 @@
                 echo "NOS HEMOS LOGUEADO CON ÉXITO";
                 session_start();
                 $_SESSION["usuario"] = $usuario;
+                $_SESSION["rol"] = $rol;
                 header('location: principal.php');
             } else {
                 echo "LA CONTRASEÑA ESTÁ MAL";
