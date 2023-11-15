@@ -6,12 +6,57 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Productos</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <link href="estilo.css" type="text/css" rel="stylesheet">
-    <?php require "./BaseDatos/conexion.php" ?>
+    <?php require "../util/conexion.php" ?>
+    <link rel="stylesheet" href="./css/estilo.css">
 </head>
 
 <body>
-
+<?php
+        session_start();
+        if (isset($_SESSION["usuario"])) {
+            $usuario = $_SESSION["usuario"];
+            $rol = $_SESSION["rol"];
+        } else {
+            //header("Location: iniciar_sesion.php");
+            $_SESSION["usuario"] = "invitado";
+            $usuario = $_SESSION["usuario"];
+            $_SESSION["rol"] = "cliente";
+            $rol = $_SESSION["rol"];
+            $_SESSION["usuario"] = "invitado";
+            $usuario = $_SESSION["cliente"];
+        }
+        ?>
+        <nav class="navbar navbar-expand-lg bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand">Pablo shop</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <?php
+                    if ($_SESSION["rol"] == "admin") {
+                    ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="principal.php">Principal</a>
+                        </li>
+                    <?php
+                    }
+                    
+                    else{
+                    ?>
+                        <li>
+                        Bienvenid@ <?php echo $usuario ?></a> 
+                        </li>
+                    <?php
+                    }
+                    ?>
+                </ul>
+                <a class="btn btn-secondary" href="cerrar_sesion.php">Cerrar sesión</a>
+            </div>
+        </div>
+    </nav>
+    <img src="./logo.PNG" class="logo">
     <?php
     function depurar($entrada)
     {
@@ -32,9 +77,6 @@
         $tamano_imagen = $_FILES["imagen"]["size"];
         $ruta_temporal = $_FILES["imagen"]["tmp_name"];
         //echo $nombre_imagen . " " . $tipo_imagen . " " . $tamano_imagen . " " . $ruta_temporal;
-        $ruta_final = "imagenes/" . $nombre_imagen;
-        move_uploaded_file($ruta_temporal, $ruta_final);
-
         #   Validación de nombreProducto
         if (strlen($temp_nombreProducto) == 0) {
             $err_nombreProducto = "Campo obligatorio";
@@ -75,7 +117,7 @@
         #   Validación de cantidad
         if (strlen($temp_cantidad) == 0) {
             $err_cantidad = "La cantidad es obligatoria";
-        } elseif (filter_var($temp_cantidad, FILTER_VALIDATE_INT) === false) { 
+        } elseif (filter_var($temp_cantidad, FILTER_VALIDATE_INT) === false) {
             $err_cantidad = "La cantidad debe ser un número entero";
         } elseif ($temp_cantidad < 0) {
             $err_cantidad = "La cantidad no puede ser negativa";
@@ -88,14 +130,13 @@
         #   Validación de imagen
         if (strlen($nombre_imagen) > 1) {
             if ($_FILES["imagen"]["error"] != 0) {
-                $err_imagen= "Error al subir la imagen";
+                $err_imagen = "Error al subir la imagen";
             } else {
                 $permitidos = ["image/jpeg", "image/png", "image/gif", "image/webp"];
                 if (!in_array($_FILES["imagen"]["type"], $permitidos)) {
-                    $err_imagen= "Error al subir la imagen";
-                }else{
-                    $ruta_final = "imagenes/" . $nombre_imagen;
-            move_uploaded_file($ruta_temporal, $ruta_final);
+                    $err_imagen = "Error al subir la imagen";
+                } else {
+                    $ruta_final = "./imagenes/" . $nombre_imagen;
                 }
             }
         } else {
@@ -110,22 +151,22 @@
                 <div class="mb-3">
                     <label class="form-label">Nombre producto: </label>
                     <input class="form-control" type="text" name="nombreProducto">
-                    <?php if (isset ($err_nombreProducto)) echo '<label class=text-danger>'.$err_nombreProducto. '</label>' ?>
+                    <?php if (isset($err_nombreProducto)) echo '<label class=text-danger>' . $err_nombreProducto . '</label>' ?>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Precio: </label>
                     <input class="form-control" type="text" name="precio">
-                    <?php if (isset ($err_precio)) echo '<label class=text-danger>'.$err_precio. '</label>' ?>
+                    <?php if (isset($err_precio)) echo '<label class=text-danger>' . $err_precio . '</label>' ?>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Descripción: </label>
                     <input class="form-control" type="text" name="descripcion">
-                    <?php if (isset ($err_descripcion)) echo '<label class=text-danger>'.$err_descripcion. '</label>' ?>
+                    <?php if (isset($err_descripcion)) echo '<label class=text-danger>' . $err_descripcion . '</label>' ?>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Cantidad: </label>
                     <input class="form-control" type="text" name="cantidad">
-                    <?php if (isset ($err_cantidad)) echo '<label class=text-danger>'.$err_cantidad. '</label>' ?>
+                    <?php if (isset($err_cantidad)) echo '<label class=text-danger>' . $err_cantidad . '</label>' ?>
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Imagen: </label>
@@ -133,20 +174,22 @@
                 </div>
                 <button class="btn btn-primary" type="submit">Enviar</button>
                 <?php
-                    if (isset($nombreProducto) && isset($precio) && isset($descripcion) && isset($cantidad)) {
-                        $sql = "INSERT INTO productos (nombreProducto, precio, descripcion, cantidad, imagen)
+                if (isset($nombreProducto) && isset($precio) && isset($descripcion) && isset($cantidad) && isset($ruta_final)) {
+                    $sql = "INSERT INTO productos (nombreProducto, precio, descripcion, cantidad, imagen)
                         VALUES ('$nombreProducto',
                         '$precio',
                         '$descripcion',
                         '$cantidad',
                         '$ruta_final')";
-                        $conexion->query($sql);
-                        echo "<div class='container alert alert-success'><h4>Producto insertado con éxito<h4><div>";
-                    }
+                    move_uploaded_file($ruta_temporal, $ruta_final);
+                    $conexion->query($sql);
+                    echo "<div class='container alert alert-success'><h4>Producto insertado con éxito<h4><div>";
+                }
                 ?>
             </form>
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 </body>
 
 </html>
