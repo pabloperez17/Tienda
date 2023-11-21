@@ -13,6 +13,7 @@
 
 <body>
     <?php
+    // Inicia la sesión y recupera información del usuario si está logueado
     session_start();
     if (isset($_SESSION["usuario"])) {
         $usuario = $_SESSION["usuario"];
@@ -35,6 +36,7 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <?php
+                    // Opcion adicional para el administrador
                     if ($_SESSION["rol"] == "admin") {
                     ?>
                         <li class="nav-item">
@@ -43,8 +45,9 @@
                     <?php
                     }
                     ?>
+                    <!-- Opciones comunes para todos los usuarios -->
                     <li class="nav-item">
-                        <a class="nav-link" href="principal.php">Ver stock</a>
+                        <a class="nav-link" href="principal.php">Almacen</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="cesta.php">Cesta</a>
@@ -74,10 +77,12 @@
                 </thead>
                 <tbody>
                     <?php
+                    // Consulta para obtener productos en la cesta
                     $sql = "SELECT pc.idProducto, p.nombreProducto, p.precio, p.descripcion, pc.cantidad, p.imagen FROM productoscestas pc JOIN productos p ON pc.idProducto = p.idProducto WHERE pc.idCesta = (SELECT idCesta FROM cestas WHERE usuario = '$usuario')";
                     $resultado = $conexion->query($sql);
                     $productos = [];
 
+                    // Creación de objetos Producto a partir de los resultados
                     while ($fila = $resultado->fetch_assoc()) {
                         $nuevo_producto = new Producto(
                             $fila["idProducto"],
@@ -90,6 +95,7 @@
                         array_push($productos, $nuevo_producto);
                     }
 
+                    // Mostrar productos en la tabla
                     foreach ($productos as $producto) {
                         echo "<tr>";
                         echo "<td>" . $producto->idProducto . "</td>";
@@ -107,13 +113,14 @@
                     ?>
                 </tbody>
             </table>
+            <!-- Mostrar precio total de la cesta -->
             <?php
             $sql = "SELECT precioTotal FROM cestas WHERE usuario = '$usuario'";
             $resultado = $conexion->query($sql);
             $fila = $resultado->fetch_assoc();
             $precioTotal = $fila['precioTotal'];
             ?>
-            <h4>El precio total del carrito es: <?php echo $precioTotal ?>€</h4>
+            <h4>El precio total de la cesta es: <?php echo $precioTotal ?>€</h4>
         </div>
 </body>
 

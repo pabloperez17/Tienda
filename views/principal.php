@@ -13,44 +13,55 @@
 
 <body>
     <?php
+    // Inicia la sesión y recupera información del usuario si está logueado
     session_start();
     if (isset($_SESSION["usuario"])) {
         $usuario = $_SESSION["usuario"];
         $rol = $_SESSION["rol"];
     } else {
-        //header("Location: iniciar_sesion.php");
+        // Si no está logueado, se establecen valores predeterminados
         $_SESSION["usuario"] = "invitado";
         $usuario = $_SESSION["usuario"];
         $_SESSION["rol"] = "cliente";
         $rol = $_SESSION["rol"];
-        $_SESSION["usuario"] = "invitado";
-        $usuario = $_SESSION["cliente"];
     }
-    #Preparamos el boton de añadir a la cesta para que segun la cantidad que se seleccione, se añada a la cesta ese numero de productos
+
+    // Procesamiento del formulario cuando se envía
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $id_producto = $_POST["idProducto"];
         $cantidad_selec = $_POST["cantidad"];
+        
+        // Verifica si la cantidad seleccionada no está vacía
         if ($cantidad_selec != "") {
-            $sql = "select cantidad from productos where idProducto = '$id_producto'";
+            $sql = "SELECT cantidad FROM productos WHERE idProducto = '$id_producto'";
             $cantidad_prod = $conexion->query($sql)->fetch_assoc()["cantidad"];
+
+            // Verifica si hay suficiente cantidad en stock
             if ($cantidad_prod != "0") {
-                $sql = "select idCesta from cestas where usuario = '$usuario'";
+                // Obtiene el ID de la cesta del usuario
+                $sql = "SELECT idCesta FROM cestas WHERE usuario = '$usuario'";
                 $idCesta = $conexion->query($sql)->fetch_assoc()["idCesta"];
-                $sql = "update productos set cantidad = (cantidad - '$cantidad_selec') where idProducto = '$id_producto'";
-                $pillamos_id = "select * from productoscestas where idProducto = '$id_producto' and idCesta = '$idCesta'";
+
+                // Actualiza la cantidad de productos en la base de datos
+                $sql = "UPDATE productos SET cantidad = (cantidad - '$cantidad_selec') WHERE idProducto = '$id_producto'";
+                $pillamos_id = "SELECT * FROM productoscestas WHERE idProducto = '$id_producto' AND idCesta = '$idCesta'";
                 $conexion->query($sql);
+
+                // Si el producto no está en la cesta, lo inserta; de lo contrario, actualiza la cantidad
                 if ($conexion->query($pillamos_id)->num_rows == 0) {
-                    $sql = "insert into productoscestas values ('$id_producto', '$idCesta', '$cantidad_selec')";
+                    $sql = "INSERT INTO productoscestas VALUES ('$id_producto', '$idCesta', '$cantidad_selec')";
                     $conexion->query($sql);
                 } else {
-                    $sql = "select cantidad from productoscestas where idProducto = '$id_producto' and idCesta = '$idCesta'";
+                    $sql = "SELECT cantidad FROM productoscestas WHERE idProducto = '$id_producto' AND idCesta = '$idCesta'";
                     $cantidad_cesta = $conexion->query($sql)->fetch_assoc()["cantidad"];
-                    $sql = "update productoscestas set cantidad = (cantidad + '$cantidad_cesta') where idProducto = '$id_producto' and idCesta = '$idCesta'";
+                    $sql = "UPDATE productoscestas SET cantidad = ('$cantidad_selec' + '$cantidad_cesta') WHERE idProducto = '$id_producto' AND idCesta = '$idCesta'";
                     $conexion->query($sql);
                 }
-                $sql = "select precio from productos where idProducto = '$id_producto'";
+
+                // Actualiza el precio total de la cesta
+                $sql = "SELECT precio FROM productos WHERE idProducto = '$id_producto'";
                 $precio = $conexion->query($sql)->fetch_assoc()["precio"];
-                $sql = "update cestas set precioTotal = (precioTotal + '$precio' * '$cantidad_selec') where idCesta = '$idCesta'";
+                $sql = "UPDATE cestas SET precioTotal = (precioTotal + '$precio' * '$cantidad_selec') WHERE idCesta = '$idCesta'";
                 $conexion->query($sql);
             }
         }
@@ -65,6 +76,7 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <?php
+                    // Opcion adicional para el administrador
                     if ($_SESSION["rol"] == "admin") {
                     ?>
                         <li class="nav-item">
@@ -73,8 +85,9 @@
                     <?php
                     }
                     ?>
+                    <!-- Opciones comunes para todos los usuarios -->
                     <li class="nav-item">
-                        <a class="nav-link" href="principal.php">Ver stock</a>
+                        <a class="nav-link" href="principal.php">Almacen</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="cesta.php">Cesta</a>
@@ -87,8 +100,9 @@
             </div>
         </div>
     </nav>
-    <?php
 
+    <?php
+    // Recupera la lista de productos desde la base de datos
     $sql = "SELECT * from productos";
     $resultado = $conexion->query($sql);
     $productos = [];
@@ -104,11 +118,10 @@
         );
         array_push($productos, $nuevo_producto);
     }
-
     ?>
+    <!-- Lista de productos -->
     <div class="container">
         <h2 class="text-center mb-3">Lista de productos</h2>
-
         <div>
             <table class=" container table table-striped table-hover">
                 <thead class="table table-dark">
@@ -124,9 +137,7 @@
                 </thead>
                 <tbody>
                     <?php
-                    $sql = "SELECT * FROM productos";
-                    $resultado = $conexion->query($sql);
-
+                    // Muestra cada producto en la tabla
                     foreach ($productos as $producto) {
                         echo "<tr>";
                         echo "<td>" . $producto->idProducto . "</td>";
@@ -139,36 +150,38 @@
                             <img witdh="50" height="100" src="<?php echo $producto->imagen ?>">
                         </td>
                         <td>
-                        <form action="" method="post">
-                            <?php if (($usuario != "invitado")) { ?>
-                                <input type="hidden" name="idProducto" value="<?php echo $producto->idProducto ?>">
-                                <label for="cantidad">Cantidad:</label>
-                                <select name="cantidad">
+                            <form action="" method="post">
+                                <?php if (($usuario != "invitado")) { ?>
+                                    <!-- Formulario para añadir productos a la cesta -->
+                                    <input type="hidden" name="idProducto" value="<?php echo $producto->idProducto ?>">
+                                    <label for="cantidad">Cantidad:</label>
+                                    <select name="cantidad">
+                                        <?php
+                                        $sql = "SELECT cantidad FROM productos where idProducto = '$producto->idProducto'";
+                                        $cantidadActual = $conexion->query($sql)->fetch_assoc()["cantidad"];
+                                        $maxCantidad = min(5, $cantidadActual);
+                                        for ($i = 1; $i <= $maxCantidad; $i++) {
+                                        ?>
+                                            <option value="<?php echo $i ?>"><?php echo $i ?></option>
+                                        <?php
+                                        }
+                                        ?>
+                                    </select>
                                     <?php
-                                    $sql = "SELECT cantidad FROM productos where idProducto = '$producto->idProducto'";
-                                    $cantidadActual = $conexion->query($sql)->fetch_assoc()["cantidad"];
-                                    $maxCantidad = min(5, $cantidadActual);
-                                    for ($i = 1; $i <= $maxCantidad; $i++) {
+                                    if ($cantidadActual > 0) {
                                     ?>
-                                        <option value="<?php echo $i ?>"><?php echo $i ?></option>
+                                        <input class="btn btn-primary" type="submit" value="Añadir">
+                                    <?php
+                                    } else {
+                                    ?>
+                                        <input class="btn btn-primary" type="submit" value="Añadir" disabled>
                                     <?php
                                     }
-                                    ?>
-                                </select>
-                                <?php
-                                if ($cantidadActual > 0) {
-                                ?>
-                                    <input class="btn btn-primary" type="submit" value="Añadir">
-                                <?php
-                                } else {
-                                ?>
+                                } else { ?>
+                                    <!-- Botón deshabilitado si el usuario es un invitado -->
                                     <input class="btn btn-primary" type="submit" value="Añadir" disabled>
-                                <?php
-                                }
-                            } else { ?>
-                                <input class="btn btn-primary" type="submit" value="Añadir" disabled>
-                            <?php } ?>
-                        </form>
+                                <?php } ?>
+                            </form>
                         </td>
                     <?php
                         echo "</tr>";
@@ -177,7 +190,8 @@
                 </tbody>
             </table>
         </div>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 </body>
 
 </html>

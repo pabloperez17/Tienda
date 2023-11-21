@@ -12,12 +12,12 @@
 
 <body>
     <?php
+    // Inicia la sesión y recupera información del usuario si está logueado
     session_start();
     if (isset($_SESSION["usuario"])) {
         $usuario = $_SESSION["usuario"];
         $rol = $_SESSION["rol"];
     } else {
-        //header("Location: iniciar_sesion.php");
         $_SESSION["usuario"] = "invitado";
         $usuario = $_SESSION["usuario"];
         $_SESSION["rol"] = "cliente";
@@ -26,7 +26,7 @@
         $usuario = $_SESSION["cliente"];
     }
     ?>
-    <nav class="navbar navbar-expand-lg bg-light">
+    <nav class="navbar navbar-expand-lg">
         <div class="container-fluid">
             <a class="navbar-brand"><img src="../views/imagenes/logo.PNG" class="logo"></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -35,6 +35,7 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <?php
+                    // Opcion adicional para el administrador
                     if ($_SESSION["rol"] == "admin") {
                     ?>
                         <li class="nav-item">
@@ -43,8 +44,9 @@
                     <?php
                     }
                     ?>
+                    <!-- Opciones comunes para todos los usuarios -->
                     <li class="nav-item">
-                        <a class="nav-link" href="principal.php">Ver stock</a>
+                        <a class="nav-link" href="principal.php">Almacen</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="cesta.php">Cesta</a>
@@ -58,8 +60,7 @@
         </div>
     </nav>
     <?php
-    function depurar($entrada)
-    {
+    function depurar($entrada){
         $salida = htmlspecialchars($entrada);
         $salida = trim($salida);
         return $salida;
@@ -71,12 +72,12 @@
         $temp_descripcion = depurar($_POST["descripcion"]);
         $temp_cantidad = depurar($_POST["cantidad"]);
 
-        //  $_FILES["nombreCampo"]["queQueremosCoger"] -> TYPE, NAME, SIZE, TMP_NAME
+
         $nombre_imagen = $_FILES["imagen"]["name"];
         $tipo_imagen = $_FILES["imagen"]["type"];
         $tamano_imagen = $_FILES["imagen"]["size"];
         $ruta_temporal = $_FILES["imagen"]["tmp_name"];
-        //echo $nombre_imagen . " " . $tipo_imagen . " " . $tamano_imagen . " " . $ruta_temporal;
+
         #   Validación de nombreProducto
         if (strlen($temp_nombreProducto) == 0) {
             $err_nombreProducto = "Campo obligatorio";
@@ -144,6 +145,7 @@
         }
     }
     ?>
+    <!-- Formulario para insertar productos -->
     <div class="container">
         <h1>Insertar producto</h1>
         <div>
@@ -173,20 +175,22 @@
                     <input class="form-control" type="file" name="imagen">
                 </div>
                 <button class="btn btn-primary" type="submit">Enviar</button>
-                <?php
-                if (isset($nombreProducto) && isset($precio) && isset($descripcion) && isset($cantidad) && isset($ruta_final)) {
-                    $sql = "INSERT INTO productos (nombreProducto, precio, descripcion, cantidad, imagen)
-                        VALUES ('$nombreProducto',
-                        '$precio',
-                        '$descripcion',
-                        '$cantidad',
-                        '$ruta_final')";
-                    move_uploaded_file($ruta_temporal, $ruta_final);
-                    $conexion->query($sql);
-                    echo "<div class='container alert alert-success'><h4>Producto insertado con éxito<h4><div>";
-                }
-                ?>
             </form>
+            <?php
+            //Si todas las validaciones son correctas, se inserta el producto 
+            if (isset($nombreProducto) && isset($precio) && isset($descripcion) && isset($cantidad) && isset($ruta_final)) {
+                $sql = "INSERT INTO productos (nombreProducto, precio, descripcion, cantidad, imagen)
+                    VALUES ('$nombreProducto',
+                    '$precio',
+                    '$descripcion',
+                    '$cantidad',
+                    '$ruta_final')";
+                //Mueve la imagen a la carpeta de destino
+                move_uploaded_file($ruta_temporal, $ruta_final);
+                $conexion->query($sql);
+                echo "<div class='container alert alert-success'><h3>Producto insertado con éxito<h3><div>";
+            }
+            ?>
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
