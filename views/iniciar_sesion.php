@@ -5,9 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar sesion</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <?php require "../util/conexion.php" ?>
-    <link rel="stylesheet" href="./css/inicio_registro.css">
+    <link rel="stylesheet" href="./css/inicio.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
 </head>
 
 <body>
@@ -21,7 +21,7 @@
 
         if ($resultado->num_rows == 0) {
     ?>
-        <div class "alert alert-danger" role="alert">
+        <div class="alert alert-danger" role="alert">
             EL USUARIO NO EXISTE
         </div>
     <?php
@@ -58,7 +58,7 @@
             </div>
             <input class="btn btn-primary" type="submit" value="Iniciar sesión">
             <div class="mb-3">
-                ¿No tienes cuenta?<a href="./registro.php">Registrate</a>
+                <p class="mt-3">¿No tienes cuenta?<a href="./registro.php">Registrarse</a></p>
             </div>
         </form>
     </div>

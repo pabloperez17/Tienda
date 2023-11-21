@@ -7,7 +7,7 @@
     <title>Registrarse</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <?php require "../util/conexion.php" ?>
-    <link rel="stylesheet" href="./css/inicio_registro.css">
+    <link rel="stylesheet" href="./css/registro.css">
 </head>
 
 <body>
@@ -86,7 +86,10 @@
                 <input class="form-control" type="date" name="fecha_nacimiento">
                 <?php if (isset ($err_fecha_nacimiento)) echo '<label class=text-danger>'.$err_fecha_nacimiento. '</label>' ?>
             </div>
-            <input class="btn btn-primary" type="submit" value="Registrarse">
+            <input class="btn btn-primary mb-2" type="submit" value="Registrarse">
+            <div class="mb-3">
+                <p class="mb-3">¿Ya tienes cuenta?<a href="./iniciar_sesion.php">Inicia sesión</a></p>
+            </div>
         </form>
     </div>
     <?php

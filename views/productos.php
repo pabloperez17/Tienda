@@ -11,22 +11,22 @@
 </head>
 
 <body>
-<?php
-        session_start();
-        if (isset($_SESSION["usuario"])) {
-            $usuario = $_SESSION["usuario"];
-            $rol = $_SESSION["rol"];
-        } else {
-            //header("Location: iniciar_sesion.php");
-            $_SESSION["usuario"] = "invitado";
-            $usuario = $_SESSION["usuario"];
-            $_SESSION["rol"] = "cliente";
-            $rol = $_SESSION["rol"];
-            $_SESSION["usuario"] = "invitado";
-            $usuario = $_SESSION["cliente"];
-        }
-        ?>
-        <nav class="navbar navbar-expand-lg bg-light">
+    <?php
+    session_start();
+    if (isset($_SESSION["usuario"])) {
+        $usuario = $_SESSION["usuario"];
+        $rol = $_SESSION["rol"];
+    } else {
+        //header("Location: iniciar_sesion.php");
+        $_SESSION["usuario"] = "invitado";
+        $usuario = $_SESSION["usuario"];
+        $_SESSION["rol"] = "cliente";
+        $rol = $_SESSION["rol"];
+        $_SESSION["usuario"] = "invitado";
+        $usuario = $_SESSION["cliente"];
+    }
+    ?>
+    <nav class="navbar navbar-expand-lg bg-light">
         <div class="container-fluid">
             <a class="navbar-brand"><img src="../views/imagenes/logo.PNG" class="logo"></a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,19 +38,20 @@
                     if ($_SESSION["rol"] == "admin") {
                     ?>
                         <li class="nav-item">
-                            <a class="nav-link" href="principal.php">Principal</a>
-                        </li>
-                    <?php
-                    }
-                    
-                    else{
-                    ?>
-                        <li>
-                        Bienvenid@ <?php echo $usuario ?></a> 
+                            <a class="nav-link" href="productos.php">Insertar productos</a>
                         </li>
                     <?php
                     }
                     ?>
+                    <li class="nav-item">
+                        <a class="nav-link" href="principal.php">Ver stock</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="cesta.php">Cesta</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link">Bienvenid@ <?php echo $usuario ?></a>
+                    </li>
                 </ul>
                 <a class="btn btn-secondary" href="cerrar_sesion.php">Cerrar sesión</a>
             </div>
