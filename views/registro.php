@@ -49,7 +49,7 @@
             $fecha_actual = date("Y-m-d");
             list($anyo_actual, $mes_actual, $dia_actual) = explode('-', $fecha_actual);
             list($anyo, $mes, $dia) = explode('-', $temp_fecha_nacimiento);
-            if (($anyo_actual - $anyo > 12) || ($anyo_actual - $anyo < 120)) {
+            if (($anyo_actual - $anyo > 12) && ($anyo_actual - $anyo < 120)) {
                 $fecha_nacimiento = $temp_fecha_nacimiento;
             } else if (($anyo_actual - $anyo < 12) || ($anyo_actual - $anyo > 120)) {
                 $err_fecha_nacimiento = "No puedes ser menor de 12 años o mayor de 120 años";
